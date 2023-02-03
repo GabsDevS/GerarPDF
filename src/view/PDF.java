@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class PDF extends JFrame {
 
@@ -39,9 +40,7 @@ public class PDF extends JFrame {
 	private JLabel lblPdfUnificado;
 	private JTextField txtFolderUnificado;
 
-	/**
-	 * Launch the application.
-	 */
+
 	public static void main(String[] args) {
 
 		try {
@@ -90,9 +89,14 @@ public class PDF extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					processar(txtFolder.getText(), txtCapas.getText(), txtFolderUnificado.getText());
+					JOptionPane.showMessageDialog(null, "Capas geradas e Pdf Unificado !");
+					
 				} catch (Exception e1) {
 					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Erro Inesperado !");
 				}
+				
+				
 			}
 		});
 		btnGerar.setBounds(174, 284, 84, 23);
@@ -129,6 +133,10 @@ public class PDF extends JFrame {
 		String folderCapas = folder_capas + "\\";
 		String folderUnificado = folder_unificado + "\\";
 		
+		validacaoDiretorio(folderOrigem);
+		validacaoDiretorio(folderCapas);
+		validacaoDiretorio(folderUnificado);
+		
 		String pasta = folderOrigem;
 		File file = new File(pasta);
 
@@ -154,7 +162,7 @@ public class PDF extends JFrame {
 
 					// adicionando um parágrafo no documento
 
-					Paragraph texto = new Paragraph(tratar(name.replace(".pdf", "")),
+					Paragraph texto = new Paragraph(tratamentoNomeArquivos(name.replace(".pdf", "")),
 							new Font(FontFamily.TIMES_ROMAN, 45, Font.BOLD));
 
 					texto.setAlignment(Element.ALIGN_CENTER);
@@ -174,7 +182,7 @@ public class PDF extends JFrame {
 		PDFMerger.mergePdfFiles(inputPdfList, outputStream);
 	}
 
-	public static String tratar(String str) {
+	public static String tratamentoNomeArquivos(String str) {
 		str = str.replace("–", "-").replace("  ", " ");
 
 		String[] words = str.split(" ");
@@ -193,5 +201,11 @@ public class PDF extends JFrame {
 
 		return sb.toString().replace("  ", " ").replace(" -", "");
 
+	}
+	
+	public static void validacaoDiretorio(String diretorio) {
+		if (! new File(diretorio).exists()) {
+			new File(diretorio).mkdir();
+		}
 	}
 }
